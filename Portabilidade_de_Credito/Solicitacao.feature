@@ -1,3 +1,5 @@
+#Exemplos de cenários de testes positivos; Caminho feliz
+
 Feature: Solicitação de Portabilidade
 
               Descrição da feature
@@ -63,3 +65,64 @@ Feature: Solicitação de Portabilidade
              When situações de devolução de TED ou bloqueios ocorrem
              Then um mecanismo deve ser implementado para prevenir a blindagem do contrato mantendo a integridade do processo
 
+
+#Seguem abaixo os exemplos de cenários de testes negativos; Caminho triste
+
+Scenario: Falha ao mapear os dados necessários para a solicitação da portabilidade
+  Given que eu estou no sistema de solicitação de portabilidade
+  When eu tento preencher os dados necessários sem fornecer o CPF
+  Then o sistema deve impedir o prosseguimento e exibir uma mensagem de erro solicitando o CPF
+
+
+Scenario: Dados insuficientes nas APIs para suportar a solicitação de portabilidade
+  Given que eu estou acessando as APIs de dados transacionais
+  When eu tento iniciar o processo de portabilidade com dados incompletos
+  Then o sistema deve detectar a insuficiência dos dados e bloquear o processo, exibindo uma mensagem de erro
+
+
+Scenario: Falha na implementação do processo de consentimento duplo
+  Given que o processo de portabilidade está em andamento
+  When o consentimento duplo não é fornecido ou é fornecido apenas por uma parte
+  Then o sistema deve impedir o avanço do processo de portabilidade e notificar a ausência do consentimento completo
+
+
+Scenario: Tentativa de realizar solicitações simultâneas de portabilidade
+  Given que uma solicitação de portabilidade está em andamento
+  When eu tento iniciar uma segunda solicitação simultânea
+  Then o sistema deve bloquear a nova solicitação e exibir uma mensagem informando que já existe uma solicitação em andamento
+
+
+Scenario: Tentativa de realizar solicitações simultâneas de portabilidade
+  Given que uma solicitação de portabilidade está em andamento
+  When eu tento iniciar uma segunda solicitação simultânea
+  Then o sistema deve bloquear a nova solicitação e exibir uma mensagem informando que já existe uma solicitação em andamento
+
+
+Scenario: Falha na exibição de mensagens ou alertas importantes
+  Given que eu estou configurando notificações no sistema
+  When um evento importante, como a ausência de proposta, ocorre
+  Then o sistema deve falhar na exibição da mensagem de alerta, deixando o usuário sem informação
+
+
+Scenario: Não permitir que o cliente receba e aceite contrapropostas via canal digital
+  Given que um cliente está usando o canal digital
+  When o cliente tenta acessar uma contraproposta
+  Then o sistema deve falhar ao apresentar a contraproposta ou impedir que o cliente a aceite digitalmente
+
+
+Scenario: Redirecionamento para o ambiente da instituição credora após exibir as condições operacionais
+  Given que o cliente está visualizando as condições operacionais do novo contrato
+  When o cliente prossegue com a solicitação de portabilidade
+  Then o sistema deve redirecionar erroneamente o cliente para o ambiente da instituição credora, interrompendo o fluxo no ambiente da proponente
+
+
+Scenario: Permitir continuidade da portabilidade com nova prestação ou prazo superior ao contrato original sem consentimento
+  Given que a nova prestação ou prazo é superior ao contrato original
+  When a portabilidade continua sem o consentimento específico do cliente
+  Then o sistema deve permitir incorretamente a continuidade da portabilidade, resultando em uma condição desfavorável para o cliente
+
+
+Scenario: Falha na prevenção de blindagem durante a solicitação de portabilidade
+  Given que eu estou gerenciando a solicitação de portabilidade
+  When situações de devolução de TED ou bloqueios ocorrem
+  Then o sistema deve falhar ao prevenir a blindagem do contrato, comprometendo a integridade do processo
