@@ -1,27 +1,48 @@
-#Exemplos de cenários de testes positivos; Caminho feliz
+Feature: Mapeamento dos dados necessários
 
-Feature: Solicitação de Portabilidade
+Durante o processo de solicitação de portabilidade considere que o cliente
+já possui uma relação com a Instituição Credora e está iniciando ou mantendo uma relação com a Instituição Proponente.
+Ambas as instituições já dispõem dos dados cadastrais do cliente via Open Finance.
+O cliente deseja realizar a portabilidade de crédito.
 
-              Descrição da feature
-    
+Scenario: Proponente envia dados para solicitar portabilidade de crédito
+Given a Proponente pede a Credora acesso aos dados de contrato do Cliente
+And a Proponente requer os dados obrigatórios:
+  | Campo                        | Valor                               |
+  | CPF                          | <CPF do Cliente>                    |
+  | Número do contrato           | <Número do contrato>                |
+  | Dados da operação de crédito | <Dados da operação de crédito>      |
+  | Proposta de crédito          | <Proposta da Instituição Proponente> |
+When os dados forem mapeados
+And os campos obrigatórios validados
+Then a Credora deve processar a solicitação de portabilidade
+And conceder os dados à Proponente
 
-        Scenario: Mapear os dados necessários para a solicitação da portabilidade
-            Given que eu estou no sistema de solicitação de portabilidade
-             When eu preencho os dados necessários para a solicitação
-                  | Campo                        | Valor                                           |
-                  | CPF                          | <CPF do devedor>                                |
-                  | Número do contrato           | <Número do contrato>                            |
-                  | Dados da operação de crédito | <Dados da operação de crédito>                  |
-                  | Proposta de crédito          | <Proposta de crédito da instituição proponente> |
-                  | Contato do devedor           | <Informações de contato do devedor>             |
-                  | Contato do proponente        | <Informações de contato do proponente>          |
-             Then todos os dados essenciais devem estar disponíveis e organizados para iniciar o processo de portabilidade
+Scenario: Falha na solicitação ao não enviar os dados necessários
+  Given que o Cliente deseja realizar a portabilidade de crédito
+  When o Cliente tenta enviar a solicitação de portabilidade via API sem preencher os dados mínimos exigidos
+  Then a API deve rejeitar a solicitação
+  And e retornar uma mensagem de erro informando a ausência dos dados obrigatórios de acordo com o Art. 7º da Resolução CMN nº 5.057
 
+Scenario: IF proponente avalia dados do cliente
+  Given que a Instituição Proponente está avaliando a viabilidade da portabilidade para o Cliente
+  And a Instituição Proponente consulta as APIs de Dados Transacionais
+  When a consulta é realizada com sucessso
+  Then a API deve retornar se os dados trafegados são suficientes para a solicitação de portabilidade 
+  And identifica a necessidade de ajustes
+  And a API deve verificar se o Cliente já forneceu o consentimento necessário e, caso não tenha fornecido, solicitar através do fluxo de compartilhamento de dados transacionais
 
-        Scenario: Avaliar a suficiência dos dados atualmente disponíveis nas APIs
-            Given que eu estou acessando as APIs de dados transacionais
-             When eu avalio os dados disponíveis para o processo de solicitação de portabilidade
-             Then a avaliação deve confirmar a suficiência dos dados ou identificar a necessidade de ajustes
+Scenario: Instituição proponente não pode consultar dados do cliente sem o consentimento
+  Given que a Instituição Proponente está avaliando a viabilidade da portabilidade para o Cliente
+  When a Instituição Proponente acessa as APIs de Dados Transacionais sem o consentimento prévio do Cliente
+  Then a API deve bloquear o acesso e solicitar o consentimento do Cliente antes de prosseguir com a solicitação de portabilidade
+
+Scenario: IF proponente consulta se a solicitação precisa de ajustes
+  Given que a Instituição Proponente está utilizando as APIs de Dados Transacionais
+  And consulta os dados da solicitação
+  When a Instituição Proponente avança com a solicitação de portabilidade
+  Then a API deve identificar qualquer ajuste necessário
+  And informar os ajustes necessários
 
 
         Scenario: Viabilizar um processo de consentimento duplo
@@ -68,10 +89,8 @@ Feature: Solicitação de Portabilidade
 
 #Seguem abaixo os exemplos de cenários de testes negativos; Caminho triste
 
-Scenario: Falha ao mapear os dados necessários para a solicitação da portabilidade
-  Given que eu estou no sistema de solicitação de portabilidade
-  When eu tento preencher os dados necessários sem fornecer o CPF
-  Then o sistema deve impedir o prosseguimento e exibir uma mensagem de erro solicitando o CPF
+
+
 
 
 Scenario: Dados insuficientes nas APIs para suportar a solicitação de portabilidade
