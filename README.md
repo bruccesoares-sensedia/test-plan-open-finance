@@ -1,4 +1,4 @@
-# Sugestão de roteiro de testes para Open Finance
-Cenários de testes elaborados com base em regras de negócios discutidas GT de Portabilidade de Crédito.
+# Sugestão de roteiro de testes para Portabilidade de Crédito
+Cenários de testes elaborados com base discussões do GT de Portabilidade de Crédito.
 
-No momento, os cenários não contemplam os endpoints e os campos de uma API.
+Os cenários não contemplam os endpoints e os objetos de uma API, mas as regras de negócio em si.
