@@ -4,7 +4,7 @@ Funcionalidade: Notificações e alertas para o cliente
     Não importa como será a comunicação da proponente com o cliente, nem o conteúdo exato da mensagem.
     O foco deve ser o momento em que deve ocorrer e o sentido da mensagem.
 
-Regra: É necessário conter ao menos uma notificação ao cliente sobre a etapa em questão
+Regra: É necessário conter ao menos uma notificação ao cliente sobre a etapa atual da jornada
     Contexto: 
         Dado o cliente já realizou pedido de portabilidade à proponente
         E a proponente notificou que recebeu o pedido com sucesso
